@@ -19,7 +19,7 @@ inputs = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 
 expected_output = np.array([[0], [1], [1], [0]])
 
-df = pd.read_csv('C:/Users/olivv/OneDrive/Pulpit/Cardiovascular_Disease_Dataset.csv')
+df = pd.read_csv('Data/Cardiovascular_Disease_Dataset.csv')
 X = df.iloc[:, 1:-1].values  # Pierwsze 12 kolumn jako zmienne wejściowe
 Y = df.iloc[:, -1].values  # Trzynasta kolumna jako zmienna wyjściowa
 
