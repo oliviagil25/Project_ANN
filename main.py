@@ -74,11 +74,51 @@ def create_layers(num_of_neurons):
 layers = create_layers([12,4,3,1])
 
 
-#ODTĄD W DÓŁ TRZEBA ZMIENIĆ
 #to jest taki wskaźnik jak mocno zmieniamy wagi przy każdej iteracji
 learning_rate = 0.1
 #to jest właściwie liczba iteracji przy trenowaniu
 epochs = 10000
+
+
+# Trening sieci neuronowej za pomocą wstecznej propagacji błędu
+def forward_propagation(X, layers):
+    activation = []
+    output = []
+    activation.append(np.dot(X, layers[0][0])+layers[1][0])
+    output.append(sigmoid(activation[0]))
+    for i in range(1, len(layers[0])):
+        activation.append(np.dot(output[i-1], layers[0][i])+layers[1][i])
+        output.append(sigmoid(activation[i]))
+
+    return activation, output
+
+fp = forward_propagation(X, layers)
+
+# Obliczenie błędu
+e = (Y - output[-1]) ** 2
+
+# output to fp[1] a weights to layers[0]
+def backpropagation(output, weights):
+    error = []
+    derrivative = []
+    error.append((Y - output[-1]) ** 2)
+    derrivative.append(error * d_sigmoid(output[-1]))
+    for i, j in zip(range(len(layers[0] - 1, -1, -1)), range(0, len(layers[0]) - 1)):
+        error.append(derrivative[j].dot(weights[i].T))
+        derrivative.append(error[j + 1] * d_sigmoid(output[i - 1]))
+
+    return error, derrivative
+
+back = backpropagation(fp[1], layers[0])
+
+# Aktualizacja wag i biasu
+def actualisation(layers, fp, back):
+    for i, j in zip(range(len(layers) - 1, 0, -1), range(0, len(layers) - 1)):
+        layers[0][i] += fp[1][i - 1].T.dot(back[1][j]) * learning_rate
+        layers[1][i] += np.sum(back[1][j], axis=0, keepdims=True) * learning_rate
+    layers[0][0] += X.T.dot(back[1][-1]) * learning_rate
+    layers[1][0] += np.sum(back[1][-1], axis=0, keepdims=True) * learning_rate
+
 
 # Trening sieci neuronowej za pomocą wstecznej propagacji błędu
 for epoch in range(epochs):
