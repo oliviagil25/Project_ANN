@@ -9,6 +9,20 @@ def sigmoid(x):
 def sigmoid_derivative(x):
     return sigmoid(x) * (1 - sigmoid(x))
 
+#funkcja tangensa hiperbolicznego
+def tanh_function(x):
+    return np.tanh(x)
+#pochodna funkcji tangensa hiperbolicznego
+def tanh_derivative(x):
+    tanh_x = tanh_function(x)
+    return 1 - tanh_x**2
+
+#funkcja progowa
+def relu(x):
+    return np.maximum(0, x)
+#pochodna funkcji progowej
+def relu_derivative(x):
+    return np.where(x > 0, 1, 0)
 
 df = pd.read_csv('Data/Cardiovascular_Disease_Dataset.csv')
 X = df.iloc[:, 1:-1].values  #Wyrzucenie pierwszej zmiennej, ponieważ to id pacjenta
