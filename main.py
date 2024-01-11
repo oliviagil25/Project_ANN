@@ -118,9 +118,14 @@ print("\nBias warstwy wyjściowej po treningu:")
 print(biases[2])
 
 
+# Funkcja porównująca wyniki
+def compare_results(predictions):
+    threshold = 0.5
+    predicted_classes = np.where(predictions >= threshold, 1, 0)
+    accuracy = np.mean(predicted_classes == testing_Y)
+    return accuracy
+
 # Testowanie sieci neuronowej
-
-
 def testing(weights, biases):
     activation = []
     output = []
@@ -129,13 +134,15 @@ def testing(weights, biases):
     for i in range(1, len(weights)):
         activation.append(np.dot(output[i-1], weights[i])+biases[i])
         output.append(sigmoid(activation[i]))
-
-    return output
+    accuracy = compare_results(output[-1])
+    return output, accuracy
 
 
 
 if __name__ == '__main__':
     print("\nWyniki po testowaniu:")
-    print(testing(weights, biases)[-1])
+    print(testing(weights, biases)[0][-1])
+    test_accuracy = testing(weights, biases)[1]
+    print("Dokładność testowania: {:.2%}".format(test_accuracy))
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
