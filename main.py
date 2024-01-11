@@ -89,7 +89,7 @@ def actualisation(weights, biases, fp, back):
         c, d = back[j].shape[1], back[j].shape[2]
         biases[i] += np.sum(back[j].reshape(c, d), axis=0, keepdims=True) * learning_rate
     c, d = back[-1].shape[1], back[-1].shape[2]
-    weights[0] += training_X.T.dot((back+[-1]).reshape(c, d)) * learning_rate
+    weights[0] += training_X.T.dot((back[-1]).reshape(c, d)) * learning_rate
     biases[0] += np.sum(back[-1].reshape(c, d), axis=0, keepdims=True) * learning_rate
 
 learning_rate = 0.1
@@ -105,17 +105,18 @@ for epoch in range(epochs):
 
 # Wyświetlenie wyników po treningu
 print("Wagi warstwy ukrytej 1 po treningu:")
-print(layers[0][0])
+print(weights[0])
 print("\nBias warstwy ukrytej 1 po treningu:")
-print(layers[1][0])
+print(biases[0])
 print("\nWagi warstwy ukrytej 2 po treningu:")
-print(layers[0][1])
+print(weights[1])
 print("\nBias warstwy ukrytej 2 po treningu:")
-print(layers[1][1])
+print(biases[1])
 print("\nWagi warstwy wyjściowej po treningu:")
-print(layers[0][2])
+print(weights[2])
 print("\nBias warstwy wyjściowej po treningu:")
-print(layers[1][2])
+print(biases[2])
+
 
 # Testowanie sieci neuronowej
 
