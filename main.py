@@ -84,13 +84,12 @@ def backpropagation(output, weights, f_derivative):
 # Aktualizacja wag i biasu
 def actualisation(weights, biases, fp, back):
     for i, j in zip(range(len(weights)-1, 0, -1), range(0, len(weights)-1)):
-        a,b = fp[i-1].T.dot(back[j]).shape[0], fp[i-1].T.dot(back[j]).shape[2]
-        weights[i] += fp[i-1].T.dot(back[j]).reshape(a,b) * learning_rate
-        c, d = back[j].shape[1], back[j].shape[2]
-        biases[i] += np.sum(back[j].reshape(c, d), axis=0, keepdims=True) * learning_rate
-    c, d = back[-1].shape[1], back[-1].shape[2]
-    weights[0] += training_X.T.dot((back[-1]).reshape(c, d)) * learning_rate
-    biases[0] += np.sum(back[-1].reshape(c, d), axis=0, keepdims=True) * learning_rate
+        back[j] = np.squeeze(back[j], axis = 0)
+        weights[i] += fp[i-1].T.dot(back[j]) * learning_rate
+        biases[i] += np.sum(back[j], axis=0, keepdims=True) * learning_rate
+    back[-1] = np.squeeze(back[-1], axis = 0)
+    weights[0] += training_X.T.dot(back[-1]) * learning_rate
+    biases[0] += np.sum(back[-1], axis=0, keepdims=True) * learning_rate
 
 learning_rate = 0.1
 epochs = 10000
