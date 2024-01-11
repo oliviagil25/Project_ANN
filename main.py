@@ -57,50 +57,50 @@ def create_layers(num_of_neurons):
 
 #Propagacja w przód
 #Funkcja jako parametr przyjmuje listę wag i biasów utworzoną przez funkcję create_layers()
-def forward_propagation(layers):
+def forward_propagation(weights, biases, function):
     activation = []
     output = []
-    activation.append(np.dot(training_X, layers[0][0])+layers[1][0])
-    output.append(sigmoid(activation[0]))
-    for i in range(1, len(layers[0])):
-        activation.append(np.dot(output[i-1], layers[0][i])+layers[1][i])
-        output.append(sigmoid(activation[i]))
+    activation.append(np.dot(training_X, weights[0])+biases[0])
+    output.append(function(activation[0]))
+    for i in range(1, len(weights)):
+        activation.append(np.dot(output[i-1], weights[i])+biases[i])
+        output.append(function(activation[i]))
 
-    return activation, output
+    return output
 
 # Obliczenie błędu  i wsteczna propagacja
 #Funkcja zwraca błąd dla każdej warstwy oraz iloczyn błędu i pochodnej funkcji
-def backpropagation(output, weights):
+def backpropagation(output, weights, f_derivative):
     error = []
-    derrivative = []
+    derivative = []
     error.append(training_Y - output[-1]**2)
-    derrivative.append(error * sigmoid_derivative(output[-1]))
-    for i, j in zip(range(len(layers[0]) - 1, -1, -1), range(0, len(layers[0]) - 1)):
-        error.append(derrivative[j].dot(weights[i].T))
-        derrivative.append(error[j + 1] * sigmoid_derivative(output[i - 1]))
+    derivative.append(error * f_derivative(output[-1]))
+    for i, j in zip(range(len(weights) - 1, -1, -1), range(0, len(weights) - 1)):
+        error.append(derivative[j].dot(weights[i].T))
+        derivative.append(error[j + 1] * f_derivative(output[i - 1]))
 
-    return error, derrivative
+    return derivative
 
 # Aktualizacja wag i biasu
-def actualisation(layers, fp, back):
-    for i, j in zip(range(len(layers[0])-1, 0, -1), range(0, len(layers[0])-1)):
-        a,b = fp[1][i-1].T.dot(back[1][j]).shape[0], fp[1][i-1].T.dot(back[1][j]).shape[2]
-        layers[0][i] += fp[1][i-1].T.dot(back[1][j]).reshape(a,b) * learning_rate
-        c, d = back[1][j].shape[1], back[1][j].shape[2]
-        layers[1][i] += np.sum(back[1][j].reshape(c, d), axis=0, keepdims=True) * learning_rate
-    c, d = back[1][-1].shape[1], back[1][-1].shape[2]
-    layers[0][0] += training_X.T.dot((back[1][-1]).reshape(c, d)) * learning_rate
-    layers[1][0] += np.sum(back[1][-1].reshape(c, d), axis=0, keepdims=True) * learning_rate
+def actualisation(weights, biases, fp, back):
+    for i, j in zip(range(len(weights)-1, 0, -1), range(0, len(weights)-1)):
+        a,b = fp[i-1].T.dot(back[j]).shape[0], fp[i-1].T.dot(back[j]).shape[2]
+        weights[i] += fp[i-1].T.dot(back[j]).reshape(a,b) * learning_rate
+        c, d = back[j].shape[1], back[j].shape[2]
+        biases[i] += np.sum(back[j].reshape(c, d), axis=0, keepdims=True) * learning_rate
+    c, d = back[-1].shape[1], back[-1].shape[2]
+    weights[0] += training_X.T.dot((back+[-1]).reshape(c, d)) * learning_rate
+    biases[0] += np.sum(back[-1].reshape(c, d), axis=0, keepdims=True) * learning_rate
 
 learning_rate = 0.1
 epochs = 10000
 #Testujemy dla dwóch warstw ukrytych o liczbie neuronów 4 i 3
-layers = create_layers([12, 4, 3, 1])
+weights, biases = create_layers([12, 4, 3, 1])
 
 for epoch in range(epochs):
-    fp = forward_propagation(layers)
-    back = backpropagation(fp[1], layers[0])
-    actualisation(layers, fp, back)
+    fp = forward_propagation(weights, biases, sigmoid)
+    back = backpropagation(fp, weights, sigmoid_derivative)
+    actualisation(weights, biases, fp, back)
 
 
 # Wyświetlenie wyników po treningu
@@ -120,22 +120,21 @@ print(layers[1][2])
 # Testowanie sieci neuronowej
 
 
-def testing(layers):
+def testing(weights, biases):
     activation = []
     output = []
-    activation.append(np.dot(testing_X, layers[0][0])+layers[1][0])
+    activation.append(np.dot(testing_X, weights[0])+biases[0])
     output.append(sigmoid(activation[0]))
-    for i in range(1, len(layers[0])):
-        activation.append(np.dot(output[i-1], layers[0][i])+layers[1][i])
+    for i in range(1, len(weights)):
+        activation.append(np.dot(output[i-1], weights[i])+biases[i])
         output.append(sigmoid(activation[i]))
 
-    return activation, output
+    return output
 
-print(testing(layers)[1][-1])
 
 
 if __name__ == '__main__':
     print("\nWyniki po testowaniu:")
-    print(testing(layers)[1][-1])
+    print(testing(weights, biases)[-1])
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
