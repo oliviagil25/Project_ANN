@@ -43,23 +43,6 @@ training_Y = Y[:800]
 testing_X = X[800:]
 testing_Y = Y[800:]
 
-"""
-# Inicjalizacja wag i biasu losowymi wartościami
-#ODTĄD
-np.random.seed(1)
-input_neurons = 12
-hidden1_neurons = 4  # Liczba neuronów w pierwszej warstwie ukrytej
-hidden2_neurons = 3  # Liczba neuronów w drugiej warstwie ukrytej
-output_neurons = 1
-
-hidden1_weights = np.random.uniform(size=(input_neurons, hidden1_neurons))
-hidden1_bias = np.random.uniform(size=(1, hidden1_neurons))
-hidden2_weights = np.random.uniform(size=(hidden1_neurons, hidden2_neurons))
-hidden2_bias = np.random.uniform(size=(1, hidden2_neurons))
-output_weights = np.random.uniform(size=(hidden2_neurons, output_neurons))
-output_bias = np.random.uniform(size=(1, output_neurons))
-"""
-
 #Funkcja zwraca losowe wartości wag i biasów dla kolejnych warstw ukrytych oraz dla warstwy wyjścia
 def create_layers(num_of_neurons):
     list_weights = []
@@ -68,7 +51,6 @@ def create_layers(num_of_neurons):
         list_weights.append(np.random.uniform(size=(num_of_neurons[i-1], num_of_neurons[i])))
         list_bias.append(np.random.uniform(size=(1, num_of_neurons[i])))
     return list_weights, list_bias
-
 
 #Trening sieci neuronowej składa się z czterech etapów: propagacja w przód, obliczenie błędu,
 # wsteczna propagacja błędu oraz aktualizacja wag i biasów
@@ -121,42 +103,6 @@ for epoch in range(epochs):
     actualisation(layers, fp, back)
 
 
-"""
-# Trening sieci neuronowej za pomocą wstecznej propagacji błędu
-for epoch in range(epochs):
-    # Forward propagation
-    hidden1_layer_activation = np.dot(X, hidden1_weights)
-    hidden1_layer_activation += hidden1_bias
-    hidden1_layer_output = sigmoid(hidden1_layer_activation)
-
-    hidden2_layer_activation = np.dot(hidden1_layer_output, hidden2_weights)
-    hidden2_layer_activation += hidden2_bias
-    hidden2_layer_output = sigmoid(hidden2_layer_activation)
-
-    output_layer_activation = np.dot(hidden2_layer_output, output_weights)
-    output_layer_activation += output_bias
-    predicted_output = sigmoid(output_layer_activation)
-
-    # Obliczenie błędu
-    error = Y - predicted_output
-
-    # Backpropagation
-    d_predicted_output = error * sigmoid_derivative(predicted_output)
-
-    error_hidden2_layer = d_predicted_output.dot(output_weights.T)
-    d_hidden2_layer = error_hidden2_layer * sigmoid_derivative(hidden2_layer_output)
-
-    error_hidden1_layer = d_hidden2_layer.dot(hidden2_weights.T)
-    d_hidden1_layer = error_hidden1_layer * sigmoid_derivative(hidden1_layer_output)
-
-    # Aktualizacja wag i biasu
-    output_weights += hidden2_layer_output.T.dot(d_predicted_output) * learning_rate
-    output_bias += np.sum(d_predicted_output, axis=0, keepdims=True) * learning_rate
-    hidden2_weights += hidden1_layer_output.T.dot(d_hidden2_layer) * learning_rate
-    hidden2_bias += np.sum(d_hidden2_layer, axis=0, keepdims=True) * learning_rate
-    hidden1_weights += X.T.dot(d_hidden1_layer) * learning_rate
-    hidden1_bias += np.sum(d_hidden1_layer, axis=0, keepdims=True) * learning_rate
-"""
 # Wyświetlenie wyników po treningu
 print("Wagi warstwy ukrytej 1 po treningu:")
 print(layers[0][0])
@@ -173,20 +119,7 @@ print(layers[1][2])
 
 # Testowanie sieci neuronowej
 
-"""
-test_input = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
-hidden1_layer_activation = np.dot(test_input, hidden1_weights)
-hidden1_layer_activation += hidden1_bias
-hidden1_layer_output = sigmoid(hidden1_layer_activation)
 
-hidden2_layer_activation = np.dot(hidden1_layer_output, hidden2_weights)
-hidden2_layer_activation += hidden2_bias
-hidden2_layer_output = sigmoid(hidden2_layer_activation)
-
-output_layer_activation = np.dot(hidden2_layer_output, output_weights)
-output_layer_activation += output_bias
-predicted_output = sigmoid(output_layer_activation)
-"""
 def testing(layers):
     activation = []
     output = []
